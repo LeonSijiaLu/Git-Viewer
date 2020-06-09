@@ -16,7 +16,7 @@ It shows a list of all repos by alphabetical order. And you can view contributor
 
 ## User Page
 
-User page displays contributors order by either contributions or pull requests. 
+User page displays contributors, order by the number of either contributions or pull requests. 
 
 * Order by contributions
 
