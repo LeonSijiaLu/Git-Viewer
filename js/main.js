@@ -28,6 +28,7 @@ function searchToggle(obj, evt) {
     }
 }
 
+// redirect to other html
 function redirect(value, route) {
     localStorage.removeItem("search_res");
     localStorage.setItem("search_res", JSON.stringify(value));
@@ -36,6 +37,7 @@ function redirect(value, route) {
     }
 }
 
+// get searched repo
 function getRepoResult() {
     var res = [];
     if (localStorage.getItem('search_owner') && localStorage.getItem('search_repo')) {
@@ -47,6 +49,7 @@ function getRepoResult() {
     }
 }
 
+// redirect to user's git page
 function redirect_to_Git(url) {
     window.location.replace(url);
 }

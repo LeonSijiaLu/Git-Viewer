@@ -41,6 +41,7 @@
                 $.ajax(settings).done(function(response) {
                     var content = "";
                     var route = "users.html"
+                    // Display repos, including language, description, forks and watchers
                     for (i = 0; i < response.length; i++) {
                         content = content + '<li id="'+response[i].name+'" onclick="redirect_User(' + "'" + res + "'" + ', ' + "'" + response[i].name + "'" + ', ' + "'" + route + "'" + ');" style="cursor: pointer;">';
                         content = content + '<h2 style="font-weight: bold">' + response[i].name + '</h2>';

@@ -35,6 +35,7 @@
         <script src="../js/main.js"></script>
         <script src="../api/api.js"></script>
         <script>
+            // Display users order by contributions from max to min
             function sortByContributors(){
                 $('#users-list').html("");
                 var res = getRepoResult();
@@ -58,6 +59,7 @@
                 });
             }
 
+            // Display users order by pull request from max to min
             function sortByPullRequests(){
                 $('#users-list').html("");
                 var res = getRepoResult();
@@ -77,39 +79,45 @@
                 $.ajax(settings).done(function(response) {
                     var hash = {};
                     var user_arr = [];
-
-                    for (i = 0; i < response.length; i++) {
-                        var name = response[i].user.login;
-                        if (name in hash) { // exists
-                            hash[name] = hash[name] + 1;
-                        } else { // not exists
-                            hash[name] = 1;
-                            user_arr.push(new user(response[i].user.login, response[i].user.avatar_url, response[i].user.html_url, 1));
+                    if (response.length > 0){
+                        for (i = 0; i < response.length; i++) {
+                            var name = response[i].user.login;
+                            if (name in hash) { // exists
+                                hash[name] = hash[name] + 1;
+                            } else { // not exists
+                                hash[name] = 1;
+                                user_arr.push(new user(response[i].user.login, response[i].user.avatar_url, response[i].user.html_url, 1));
+                            }
                         }
-                    }
 
-                    for (i = 0; i < user_arr.length; i++) {
-                        if (user_arr[i].name in hash) {
-                            user_arr[i].pr = hash[user_arr[i].name];
+                        for (i = 0; i < user_arr.length; i++) {
+                            if (user_arr[i].name in hash) {
+                                user_arr[i].pr = hash[user_arr[i].name];
+                            }
                         }
-                    }
 
-                    var content = "";
-                    var sortedArray = quickSort(user_arr, 0, user_arr.length - 1);
-                    
-                    for (i = 0; i < sortedArray.length; i++) {
-                        content = content + '<li style="cursor: pointer;" onclick="redirect_to_Git(' + "'" + sortedArray[i].html_url + "'" + ');">';
-                        content = content + '<img style="float: right;" src="'+sortedArray[i].avatar_url+'" alt="Avatar" width="80" height="80">'
-                        content = content + '<h2 style="font-weight: bold; word-break: break-word;">' + sortedArray[i].name + '</h2>';
-                        content = content + '<p>Pull Requests:  ' + sortedArray[i].pr + '</p>';
-                        content = content + '</li>';
+                        var content = "";
+                        var sortedArray = quickSort(user_arr, 0, user_arr.length - 1);
+
+                        for (i = 0; i < sortedArray.length; i++) {
+                            content = content + '<li style="cursor: pointer;" onclick="redirect_to_Git(' + "'" + sortedArray[i].html_url + "'" + ');">';
+                            content = content + '<img style="float: right;" src="'+sortedArray[i].avatar_url+'" alt="Avatar" width="80" height="80">'
+                            content = content + '<h2 style="font-weight: bold; word-break: break-word;">' + sortedArray[i].name + '</h2>';
+                            content = content + '<p>Pull Requests:  ' + sortedArray[i].pr + '</p>';
+                            content = content + '</li>';
+                        }
+                        $('#users-list').html($('#users-list').html() + content);
+                    }else{
+                        var content = '<h2 style="text-align: center;">This repo does not have any pull requests</h2>';
+                        $('#users-list').html($('#users-list').html() + content);
                     }
-                    $('#users-list').html($('#users-list').html() + content);
                 });
             }
 
             sortByContributors();
 
+            // Flip sort option
+            // Sort by pull requests or Sort by contributions
             function flipsVanish() {
                 $('.btn-flip').each(function() {
                     if ($(this).hasClass("vanish")) {
