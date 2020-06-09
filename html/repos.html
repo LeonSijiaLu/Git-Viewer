@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Git Viewer</title>
+		<meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta property="og:title" content="" />
+        <meta property="og:url" content="" />
+        <meta property="og:description" content="" />		
+        <link rel="icon" href="../img/logo.png">
+
+        <link type="text/css" href="../css/main.css" rel="stylesheet" />
+        <link type="text/css" href="../css/repos.css" rel="stylesheet" />
+        <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <!--Repo Section-->
+        <section id="repos-git">
+            <div style="text-align: center;" id="repos-image"></div>
+            <main>
+              <ol class="gradient-list" id="repos-list"></ol>
+            </main>
+        </search>
+
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../api/api.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var res = getSearchResult();
+                var settings = {
+                    "url": "https://api.github.com/users/" + res + "/repos?page=1&per_page=100",
+                    "method": "GET",
+                    "timeout": 0,
+                };
+
+                $.ajax(settings).done(function(response) {
+                    var content = "";
+                    var route = "users.html"
+                    for (i = 0; i < response.length; i++) {
+                        content = content + '<li id="'+response[i].name+'" onclick="redirect_User(' + "'" + res + "'" + ', ' + "'" + response[i].name + "'" + ', ' + "'" + route + "'" + ');" style="cursor: pointer;">';
+                        content = content + '<h2 style="font-weight: bold">' + response[i].name + '</h2>';
+                        if (response[i].description != null){content = content + '<p>Description:  ' + response[i].description + '</p>';}
+                        if (response[i].language != null){content = content + '<p>Language:  ' + response[i].language + '</p>';}
+                        if (response[i].forks_count != null){content = content + '<p>Forks:  ' + response[i].forks_count + '</p>';}
+                        if (response[i].watchers_count != null){content = content + '<p>Watchers:  ' + response[i].watchers_count + '</p>';}
+                        content = content + '</li>';
+                    }
+                    $('#repos-image').html(
+                        $('#repos-image').html() + '<img src="'+response[0].owner.avatar_url+'" width="80" height="80"><span style="font-weight: bold; font-size: x-large;">'+res+'</span>'
+                    );
+                    $('#repos-list').html($('#repos-list').html() + content);
+                });
+            });		
+        </script>
+    </body>
+</html>

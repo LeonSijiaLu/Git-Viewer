@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Git Viewer</title>
+		<meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta property="og:title" content="" />
+        <meta property="og:url" content="" />
+        <meta property="og:description" content="" />		
+        <link rel="icon" href="../img/logo.png">
+
+        <link type="text/css" href="../css/main.css" rel="stylesheet" />
+        <link type="text/css" href="../css/repos.css" rel="stylesheet" />
+        <link type="text/css" href="../css/users.css" rel="stylesheet" />
+        <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <!--User Section-->
+        <section id="users-git">
+            <div id="flips" style="text-align: center">
+                <a onclick="flipsVanish()" href="#" class="btn-flip con" data-back="Sort by pull requests" data-front="Sort by contributions"></a>
+                <a onclick="flipsVanish()" href="#" class="btn-flip vanish pull" data-back="Sort by pull contributions" data-front="Sort by pull requests"></a>
+            </div>
+            <main>
+              <ol class="gradient-list" id="users-list"></ol>
+            </main>
+        </search>
+
+
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../api/api.js"></script>
+        <script>
+            function sortByContributors(){
+                $('#users-list').html("");
+                var res = getRepoResult();
+                var settings = {
+                    "url": "https://api.github.com/repos/" + res[0] + "/" + res[1] + "/contributors?page=1&per_page=100",
+                    "method": "GET",
+                    "timeout": 0,
+                };
+
+                $.ajax(settings).done(function(response) {
+                    var content = "";
+
+                    for (i = 0; i < response.length; i++) {
+                        content = content + '<li style="cursor: pointer;" onclick="redirect_to_Git(' + "'" + response[i].html_url + "'" + ');">';
+                        content = content + '<img style="float: right;" src="'+response[i].avatar_url+'" alt="Avatar" width="80" height="80">'
+                        content = content + '<h2 style="font-weight: bold; word-break: break-word;">' + response[i].login + '</h2>';
+                        if (response[i].contributions != null){content = content + '<p>Contributions:  ' + response[i].contributions + '</p>';}
+                        content = content + '</li>';
+                    }
+                    $('#users-list').html($('#users-list').html() + content);
+                });
+            }
+
+            function sortByPullRequests(){
+                $('#users-list').html("");
+                var res = getRepoResult();
+                var settings = {
+                    "url": "https://api.github.com/repos/" + res[0] + "/" + res[1] + "/pulls?page=1&per_page=100",
+                    "method": "GET",
+                    "timeout": 0,
+                };
+
+                function user(name, avatar, html, pr) {
+                    this.name = name;
+                    this.avatar_url = avatar;
+                    this.html_url = html;
+                    this.pr = pr;
+                }
+
+                $.ajax(settings).done(function(response) {
+                    var hash = {};
+                    var user_arr = [];
+
+                    for (i = 0; i < response.length; i++) {
+                        var name = response[i].user.login;
+                        if (name in hash) { // exists
+                            hash[name] = hash[name] + 1;
+                        } else { // not exists
+                            hash[name] = 1;
+                            user_arr.push(new user(response[i].user.login, response[i].user.avatar_url, response[i].user.html_url, 1));
+                        }
+                    }
+
+                    for (i = 0; i < user_arr.length; i++) {
+                        if (user_arr[i].name in hash) {
+                            user_arr[i].pr = hash[user_arr[i].name];
+                        }
+                    }
+
+                    var content = "";
+                    var sortedArray = quickSort(user_arr, 0, user_arr.length - 1);
+                    
+                    for (i = 0; i < sortedArray.length; i++) {
+                        content = content + '<li style="cursor: pointer;" onclick="redirect_to_Git(' + "'" + sortedArray[i].html_url + "'" + ');">';
+                        content = content + '<img style="float: right;" src="'+sortedArray[i].avatar_url+'" alt="Avatar" width="80" height="80">'
+                        content = content + '<h2 style="font-weight: bold; word-break: break-word;">' + sortedArray[i].name + '</h2>';
+                        content = content + '<p>Pull Requests:  ' + sortedArray[i].pr + '</p>';
+                        content = content + '</li>';
+                    }
+                    $('#users-list').html($('#users-list').html() + content);
+                });
+            }
+
+            sortByContributors();
+
+            function flipsVanish() {
+                $('.btn-flip').each(function() {
+                    if ($(this).hasClass("vanish")) {
+                        $(this).removeClass("vanish");
+                        if ($(this).hasClass("con")){
+                            sortByContributors();
+                        }else{
+                            sortByPullRequests();
+                        }
+                    } else {
+                        $(this).addClass("vanish");
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

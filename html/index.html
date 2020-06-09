@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Git Viewer</title>
+		<meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <meta property="og:title" content="" />
+        <meta property="og:url" content="" />
+        <meta property="og:description" content="" />		
+        <link rel="icon" href="../img/logo.png">
+
+        <link type="text/css" href="../css/main.css" rel="stylesheet" />
+        <link type="text/css" href="../css/search.css" rel="stylesheet" />
+        <link type="text/css" href="../css/bootstrap.min.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <!--Search Bar-->
+        <section id="search-git">
+            <h2 style="text-align: center">Search Git Repo Here</h2>
+            <div class="search-wrapper">
+                <div class="input-holder">
+                    <input type="text" id="search-content" class="search-input" placeholder="Type to search" />
+                    <button style="background: black" id="search-bar" class="search-icon" onclick="searchToggle(this, event);"><span></span></button>
+                </div>
+                <span class="close" onclick="searchToggle(this, event);"></span>
+            </div>
+        </search>
+
+        <script src="../js/jquery.min.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../api/api.js"></script>
+        <script>
+            $(document).ready(function(){
+                // Click event to redirect to repo page
+                $("#search-bar").click(function() {
+                    var owner = $("#search-content").val();
+                    if (owner != "") {
+                        redirect(owner, "repos.html");
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
